@@ -111,10 +111,6 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             return ("Compilation Error", 0)
 
     write_file(sc, problem, bat, case, "in", "Judge" + str(judgeNum) + "/data.in")
-    try:
-        os.remove("Judge" + str(judgeNum) + "/meta.yaml")
-    except:
-        print("Could not remove isolate meta.yaml file")
 
     myInput = open("Judge" + str(judgeNum) + "/data.in", "r")
     myOutput = open("Judge" + str(judgeNum) + "/data.out", "w")
