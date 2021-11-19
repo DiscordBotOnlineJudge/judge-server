@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+service JudgeService {
+    rpc judge (SubmissionRequest) returns (SubmissionResult) {}
+}
+
+message SubmissionRequest {
+    string username = 1;
+    string source = 2;
+    string lang = 3;
+    string problem = 4;
+    bool attachment = 5;
+    string filename = 6;
+}
+
+message SubmissionResult {
+    int32 finalScore = 1;
+}
