@@ -10,7 +10,6 @@ message SubmissionRequest {
     string lang = 3;
     string problem = 4;
     bool attachment = 5;
-    string filename = 6;
 }
 
 message SubmissionResult {

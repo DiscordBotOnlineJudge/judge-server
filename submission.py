@@ -14,7 +14,7 @@ def clean(src):
 def edit(settings, content, judgeNum):
     settings.update_one({"type":"judge", "num":judgeNum}, {"$set":{"output":content}})
 
-def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, filename, lang_dict) -> int:
+def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, lang_dict) -> int:
     settings.insert_one({"type":"use", "author":username, "message":source})
     
     cleaned = ""
