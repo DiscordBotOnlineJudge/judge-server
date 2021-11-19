@@ -9,7 +9,7 @@ cd judge-server
 ```
 
 Configure the judge number by creating a directory named `Judge` followed by the judge number you would like. For example,
-```
+```bash
 mkdir Judge1
 ```
 
@@ -22,14 +22,14 @@ port: [port to host the server on]
 ## Running the judge-server listener
 The judge uses gRPC to listen for submissions from the Discord bot interface.
 Make sure you have `gRPC` installed on your machine.
-```
+```bash
 python3 -m pip install --upgrade pip  # Update your pip installer
 pip3 install grpcio
 pip3 install grpcio-tools
 ```
 
 To run the judge, call the judge_server.py listener
-```
+```bash
 python3 judge_server.py
 ```
 
