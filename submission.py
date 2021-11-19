@@ -198,5 +198,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
     msg += "\nFinal Score: " + str(finalscore) + " / 100\nExecution finished using {taken:.3f} seconds, {mem:.2f} MB".format(taken = totalTime, mem = processMem / tot)
     edit(settings, ("```diff\n" + msg + "\n(Status: COMPLETED)```"), judgeNum)
 
-    #clearSources()
+    if ce:
+        return -1
+        
     return finalscore
