@@ -63,9 +63,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
     
     edit(settings, curmsg, judgeNum)
 
-    language = settings.find_one({"type":"lang", "name":lang})
-    compl = language['compl'].format(x = judgeNum)
-    cmdrun = language['run'].format(x = judgeNum, t = timelim, path = settings.find_one({"type":"judge", "num":judgeNum})['path'])
+    compl = lang[0].format(x = judgeNum)
+    cmdrun = lang[1].format(x = judgeNum, t = timelim, path = settings.find_one({"type":"judge", "num":judgeNum})['path'])
 
     finalscore = 0
     ce = False

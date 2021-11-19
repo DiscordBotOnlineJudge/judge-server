@@ -13,6 +13,8 @@ judgeSettings = yaml.safe_load(open("JudgeSetup.yaml", "r"))
 judgeNum = judgeSettings['JudgeNum']
 portNum = judgeSettings['port']
 
+lang_dict = yaml.safe_load(open("lang.yaml", "r"))
+
 class Listener(judge_pb2_grpc.JudgeServiceServicer):
     def __init__(self):
         pass
@@ -22,7 +24,8 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
 
     def judge(self, request, context):
         try:
-            score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, request.filename)
+            lang = lang_dict[request.lang]
+            score = submission.submit(storage_client, settings, request.username, request.source, lang, request.problem, judgeNum, request.attachment, request.filename)
         except Exception as e:
             print(str(e))
 
