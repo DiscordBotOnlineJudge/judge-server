@@ -14,7 +14,7 @@ def clean(src):
 def edit(settings, content, judgeNum):
     settings.update_one({"type":"judge", "num":judgeNum}, {"$set":{"output":content}})
 
-def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, filename) -> int:
+def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, filename, lang_dict) -> int:
     settings.insert_one({"type":"use", "author":username, "message":source})
     
     cleaned = ""
@@ -63,9 +63,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
     
     edit(settings, curmsg, judgeNum)
 
-    print(lang)
-    compl = lang[0].format(x = judgeNum)
-    cmdrun = lang[1].format(x = judgeNum, t = timelim, path = settings.find_one({"type":"judge", "num":judgeNum})['path'])
+    compl = lang_dict[0].format(x = judgeNum)
+    cmdrun = lang_dict[1].format(x = judgeNum, t = timelim, path = settings.find_one({"type":"judge", "num":judgeNum})['path'])
 
     finalscore = 0
     ce = False
