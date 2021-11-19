@@ -16,6 +16,7 @@ def edit(settings, content, judgeNum):
 
 def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, lang_dict) -> int:
     settings.insert_one({"type":"use", "author":username, "message":source})
+    filename = lang_dict[2]
     
     cleaned = ""
     if attachment:
