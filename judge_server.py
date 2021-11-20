@@ -6,6 +6,7 @@ import judge_pb2
 import judge_pb2_grpc
 import submission
 import yaml
+import sys
 from google.cloud import storage
 from pymongo import MongoClient
 
@@ -25,8 +26,9 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
     def judge(self, request, context):
         try:
             score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
-        except Exception as e:
-            print(str(e))
+        except Exception:
+            type, value, traceback = sys.exc_info()
+            traceback.print_exc()
 
         return judge_pb2.SubmissionResult(finalScore = score)
 
