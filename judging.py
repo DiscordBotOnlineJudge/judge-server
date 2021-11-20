@@ -105,10 +105,10 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             stdout.flush()
             stdout.close()
         except subprocess.TimeoutExpired:
-            return ("Compilation Error: Request timed out", 0)
+            return ("Compilation Error: Request timed out", 0, 0)
 
         if not comp.poll() == 0:
-            return ("Compilation Error", 0)
+            return ("Compilation Error", 0, 0)
 
     write_file(sc, problem, bat, case, "in", "Judge" + str(judgeNum) + "/data.in")
 
