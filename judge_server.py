@@ -26,9 +26,10 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
     def judge(self, request, context):
         try:
             score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
-        except Exception:
-            type, value, traceback = sys.exc_info()
-            print(type, value, sep = '\n')
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
 
         return judge_pb2.SubmissionResult(finalScore = score)
 
