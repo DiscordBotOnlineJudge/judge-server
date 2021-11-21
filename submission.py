@@ -208,3 +208,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
+        with open("InternalErrors.txt", "w") as f:
+            f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
+            f.flush()
+            f.close()
