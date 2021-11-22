@@ -80,17 +80,20 @@ def getIsolateTime(judgeNum, settings):
     meta = None
     t = -1
     mem = -1
+    exitcode = -1
     try:
         meta = open("Judge" + str(judgeNum) + "/meta.yaml", "r")
     except:
-        return (-1, -1)
+        return (-1, -1, -1)
     for line in meta:
         if line.startswith("time"):
             t = float(line[line.find(":") + 1:].strip())
         elif line.startswith("cg-mem"):
             mem = float(line[line.find(":") + 1:].strip())
+        elif line.starswith("exitcode"):
+            exitcode = int(line[line.find(":") + 1:].strip())
     meta.close()
-    return (t, mem)
+    return (t, mem, exitcode)
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
     if bat <= 1 and case <= 1 and len(compl) > 0:
@@ -117,21 +120,13 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
     anyErrors = open("errors.txt", "w")
     
     proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
-
-    tle = False
-    startTime = time.time()
-    while proc.poll() is None:
-        if time.time() - startTime > timelim:
-            tle = True
-            break
+    proc.wait(timeout = timelim + 3) # Add 3 seconds of grace time
 
     getIsolate = getIsolateTime(judgeNum, settings)
     ft = getIsolate[0]
     fm = getIsolate[1]
-    if ft < 0: # Not an isolate process
-        ft = time.time() - startTime
-    else:
-        os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
+    exitcode = getIsolate[2]
+    os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
 
     taken = "{x:.3f}".format(x = ft)
 
@@ -146,9 +141,9 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
     ts = "{x:.3f}".format(x = timelim)
     memTaken = fm / 1024
 
-    if tle:
+    if exitcode == -1:
         return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
-    elif not poll == 0:
+    elif not exitcode == 0:
         return ("Runtime/Memory Error (Exit code " + str(poll) + ") [" + taken + " seconds]", ft, memTaken)
     
     memMsg = ""
