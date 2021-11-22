@@ -78,23 +78,32 @@ def write_file(storage_client, problem, bat, case, ext, save):
     blob.download_to_filename(save)
 
 def getIsolateTime(judgeNum, settings):
-    meta = None
-    t = -1
-    mem = -1
-    exitcode = -1
     try:
-        meta = open("Judge" + str(judgeNum) + "/meta.yaml", "r")
-    except:
-        return (-1, -1, -1)
-    for line in meta:
-        if line.startswith("time"):
-            t = float(line[line.find(":") + 1:].strip())
-        elif line.startswith("cg-mem"):
-            mem = float(line[line.find(":") + 1:].strip())
-        elif line.starswith("exitcode"):
-            exitcode = int(line[line.find(":") + 1:].strip())
-    meta.close()
-    return (t, mem, exitcode)
+        meta = None
+        t = -1
+        mem = -1
+        exitcode = -1
+        try:
+            meta = open("Judge" + str(judgeNum) + "/meta.yaml", "r")
+        except:
+            return (-1, -1, -1)
+        for line in meta:
+            if line.startswith("time"):
+                t = float(line[line.find(":") + 1:].strip())
+            elif line.startswith("cg-mem"):
+                mem = float(line[line.find(":") + 1:].strip())
+            elif line.starswith("exitcode"):
+                exitcode = int(line[line.find(":") + 1:].strip())
+        meta.close()
+        return (t, mem, exitcode)
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        with open("InternalErrors.txt", "w") as f:
+            f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
+            f.flush()
+            f.close()
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
     try:
