@@ -120,7 +120,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
     anyErrors = open("errors.txt", "w")
     
     proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
-    proc.wait(timeout = timelim + 3) # Add 3 seconds of grace time
+    proc.wait(timelim + 3) # Add 3 seconds of grace time
 
     getIsolate = getIsolateTime(judgeNum, settings)
     ft = getIsolate[0]
