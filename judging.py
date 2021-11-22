@@ -8,6 +8,7 @@ import math
 import asyncio
 import resource
 import yaml
+import sys
 
 def limit_virtual_memory():
     MAX_VIRTUAL_MEMORY = 256 * 1024 * 1024 # MB
@@ -96,67 +97,76 @@ def getIsolateTime(judgeNum, settings):
     return (t, mem, exitcode)
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
-    if bat <= 1 and case <= 1 and len(compl) > 0:
-        anyErrors = open("Judge" + str(judgeNum) + "/errors.txt", "w")
-        stdout = open("Judge" + str(judgeNum) + "/stdout.txt", "w")
-        comp = subprocess.Popen(compl, stdout=stdout, stderr=anyErrors, shell=True)
+    try:
+        if bat <= 1 and case <= 1 and len(compl) > 0:
+            anyErrors = open("Judge" + str(judgeNum) + "/errors.txt", "w")
+            stdout = open("Judge" + str(judgeNum) + "/stdout.txt", "w")
+            comp = subprocess.Popen(compl, stdout=stdout, stderr=anyErrors, shell=True)
+
+            try:
+                comp.wait(timeout = 5)
+                anyErrors.flush()
+                anyErrors.close()
+                stdout.flush()
+                stdout.close()
+            except subprocess.TimeoutExpired:
+                return ("Compilation Error: Request timed out", 0, 0)
+
+            if not comp.poll() == 0:
+                return ("Compilation Error", 0, 0)
+
+        write_file(sc, problem, bat, case, "in", "Judge" + str(judgeNum) + "/data.in")
+
+        myInput = open("Judge" + str(judgeNum) + "/data.in", "r")
+        myOutput = open("Judge" + str(judgeNum) + "/data.out", "w")
+        anyErrors = open("errors.txt", "w")
+        
+        proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
+        proc.wait(timelim + 3) # Add 3 seconds of grace time
+
+        getIsolate = getIsolateTime(judgeNum, settings)
+        ft = getIsolate[0]
+        fm = getIsolate[1]
+        exitcode = getIsolate[2]
+        os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
+
+        taken = "{x:.3f}".format(x = ft)
+
+        poll = proc.poll()
+        proc.terminate()
+        myInput.close()
+        myOutput.flush()
+        anyErrors.flush()
+        myOutput.close()
+        anyErrors.close()
+
+        ts = "{x:.3f}".format(x = timelim)
+        memTaken = fm / 1024
+
+        if exitcode == -1:
+            return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
+        elif not exitcode == 0:
+            return ("Runtime/Memory Error (Exit code " + str(poll) + ") [" + taken + " seconds]", ft, memTaken)
+        
+        memMsg = ""
+        if fm >= 1000:
+            memMsg = ", {x:.2f} MB".format(x = fm / 1024) # Convert from KB to MB
+        elif fm >= 0:
+            memMsg = ", {x:.2f} KB".format(x = fm)
 
         try:
-            comp.wait(timeout = 5)
-            anyErrors.flush()
-            anyErrors.close()
-            stdout.flush()
-            stdout.close()
-        except subprocess.TimeoutExpired:
-            return ("Compilation Error: Request timed out", 0, 0)
-
-        if not comp.poll() == 0:
-            return ("Compilation Error", 0, 0)
-
-    write_file(sc, problem, bat, case, "in", "Judge" + str(judgeNum) + "/data.in")
-
-    myInput = open("Judge" + str(judgeNum) + "/data.in", "r")
-    myOutput = open("Judge" + str(judgeNum) + "/data.out", "w")
-    anyErrors = open("errors.txt", "w")
-    
-    proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
-    proc.wait(timelim + 3) # Add 3 seconds of grace time
-
-    getIsolate = getIsolateTime(judgeNum, settings)
-    ft = getIsolate[0]
-    fm = getIsolate[1]
-    exitcode = getIsolate[2]
-    os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
-
-    taken = "{x:.3f}".format(x = ft)
-
-    poll = proc.poll()
-    proc.terminate()
-    myInput.close()
-    myOutput.flush()
-    anyErrors.flush()
-    myOutput.close()
-    anyErrors.close()
-
-    ts = "{x:.3f}".format(x = timelim)
-    memTaken = fm / 1024
-
-    if exitcode == -1:
-        return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
-    elif not exitcode == 0:
-        return ("Runtime/Memory Error (Exit code " + str(poll) + ") [" + taken + " seconds]", ft, memTaken)
-    
-    memMsg = ""
-    if fm >= 1000:
-        memMsg = ", {x:.2f} MB".format(x = fm / 1024) # Convert from KB to MB
-    elif fm >= 0:
-        memMsg = ", {x:.2f} KB".format(x = fm)
-
-    try:
-        if checkEqual(problem, bat, case, judgeNum, sc):
-            return ("Accepted [" + taken + " seconds" + memMsg + "]", ft, memTaken)
-        else:
-            return ("Wrong Answer [" + taken + " seconds" + memMsg + "]", ft, memTaken)
+            if checkEqual(problem, bat, case, judgeNum, sc):
+                return ("Accepted [" + taken + " seconds" + memMsg + "]", ft, memTaken)
+            else:
+                return ("Wrong Answer [" + taken + " seconds" + memMsg + "]", ft, memTaken)
+        except Exception as e:
+            print("Fatal error during grading:\n", str(e))
+            return ("Internal System Error [" + taken + " seconds" + memMsg + "]", ft, memTaken)
     except Exception as e:
-        print("Fatal error during grading:\n", str(e))
-        return ("Internal System Error [" + taken + " seconds" + memMsg + "]", ft, memTaken)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        with open("InternalErrors.txt", "w") as f:
+            f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
+            f.flush()
+            f.close()
