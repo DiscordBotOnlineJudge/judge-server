@@ -80,20 +80,17 @@ def getIsolateTime(judgeNum, settings):
     meta = None
     t = -1
     mem = -1
-    exitcode = -1
     try:
         meta = open("Judge" + str(judgeNum) + "/meta.yaml", "r")
     except:
-        return (-1, -1, -1)
+        return (-1, -1)
     for line in meta:
         if line.startswith("time"):
             t = float(line[line.find(":") + 1:].strip())
         elif line.startswith("cg-mem"):
             mem = float(line[line.find(":") + 1:].strip())
-        elif line.starswith("exitcode"):
-            exitcode = int(line[line.find(":") + 1:].strip())
     meta.close()
-    return (t, mem, exitcode)
+    return (t, mem)
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
     if bat <= 1 and case <= 1 and len(compl) > 0:
@@ -115,21 +112,41 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
 
     write_file(sc, problem, bat, case, "in", "Judge" + str(judgeNum) + "/data.in")
 
-    proc = subprocess.Popen(cmdrun, shell=True)
-    proc.wait(timelim + 3)
+    myInput = open("Judge" + str(judgeNum) + "/data.in", "r")
+    myOutput = open("Judge" + str(judgeNum) + "/data.out", "w")
+    anyErrors = open("errors.txt", "w")
+    
+    proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
+
+    tle = False
+    startTime = time.time()
+    while proc.poll() is None:
+        if time.time() - startTime > timelim:
+            tle = True
+            break
 
     getIsolate = getIsolateTime(judgeNum, settings)
     ft = getIsolate[0]
     fm = getIsolate[1]
-    poll = getIsolate[2]
-    os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
+    if ft < 0: # Not an isolate process
+        ft = time.time() - startTime
+    else:
+        os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
 
-    taken = "{x:.3f}".format(x = ft) # Time taken
+    taken = "{x:.3f}".format(x = ft)
+
+    poll = proc.poll()
+    proc.terminate()
+    myInput.close()
+    myOutput.flush()
+    anyErrors.flush()
+    myOutput.close()
+    anyErrors.close()
 
     ts = "{x:.3f}".format(x = timelim)
     memTaken = fm / 1024
 
-    if poll == -1:
+    if tle:
         return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
     elif not poll == 0:
         return ("Runtime/Memory Error (Exit code " + str(poll) + ") [" + taken + " seconds]", ft, memTaken)
