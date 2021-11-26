@@ -200,10 +200,11 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         msg += "\nFinal Score: " + str(finalscore) + " / 100\nExecution finished using {taken:.3f} seconds, {mem:.2f} MB".format(taken = totalTime, mem = processMem / tot)
         edit(settings, ("```diff\n" + msg + "\n(Status: COMPLETED)```"), judgeNum)
 
+        finalOutput = ("```diff\n" + msg + "\n(Status: COMPLETED)```")
         if ce:
-            return -1
+            return (-1, finalOutput)
             
-        return finalscore
+        return (finalscore, finalOutput)
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]

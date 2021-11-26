@@ -1,3 +1,5 @@
+// File compilation command: python3 -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/judge.proto
+
 syntax = "proto3";
 
 service JudgeService {
@@ -14,4 +16,6 @@ message SubmissionRequest {
 
 message SubmissionResult {
     int32 finalScore = 1;
+    string error = 2;
+    string finalOutput = 3;
 }

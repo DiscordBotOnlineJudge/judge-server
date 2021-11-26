@@ -25,7 +25,7 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
 
     def judge(self, request, context):
         score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
-        return judge_pb2.SubmissionResult(finalScore = score)
+        return judge_pb2.SubmissionResult(finalScore = score[0], error = open("errors.txt").read(1000), finalOutput = score[1])
 
 
 def serve():
