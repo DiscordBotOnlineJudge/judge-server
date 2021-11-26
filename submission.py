@@ -95,7 +95,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         vv = judging.judge(problem, b + 1, i, compl, cmdrun, judgeNum, timelim, username, storage_client, settings)
                         verd = vv[0]
                         totalTime += vv[1]
-                        processMem += vv[2]
+                        processMem = max(processMem, vv[2])
 
                     if not sk and verd.split()[0] == "Compilation":
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
@@ -149,7 +149,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         avgMem += vv[2]
 
                         totalTime += vv[1]
-                        processMem += vv[2]
+                        processMem = max(processMem, vv[2])
 
                     if not sk and verd.split()[0] == "Compilation":
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
@@ -197,7 +197,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         
         if batches[len(batches) - 1] == 1:
             msg += "\n"
-        msg += "\nFinal Score: " + str(finalscore) + " / 100\nExecution finished using {taken:.3f} seconds, {mem:.2f} MB".format(taken = totalTime, mem = processMem / tot)
+        msg += "\nFinal Score: " + str(finalscore) + " / 100\nExecution finished using {taken:.3f} seconds, {mem:.2f} MB".format(taken = totalTime, mem = processMem)
         edit(settings, ("```diff\n" + msg + "\n(Status: COMPLETED)```"), judgeNum)
 
         finalOutput = ("```diff\n" + msg + "\n(Status: COMPLETED)```")
