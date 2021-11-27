@@ -139,7 +139,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
         exitcode = getIsolate[2]
 
         # Cleanup sandbox and output files
-        os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null && rm Judge" + str(judgeNum) + "/data.out")
+        os.system("isolate --cg --cleanup > /dev/null && isolate --cg --init > /dev/null")
 
         taken = "{x:.3f}".format(x = ft)
 
@@ -181,3 +181,4 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
             f.flush()
             f.close()
+    os.remove("Judge" + str(judgeNum) + "/data.out")
