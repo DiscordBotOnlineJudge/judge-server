@@ -181,4 +181,4 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
             f.flush()
             f.close()
-    os.remove("Judge" + str(judgeNum) + "/data.out")
+    os.system("rm Judge" + str(judgeNum) + "/data.out")
