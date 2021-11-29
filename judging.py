@@ -130,8 +130,13 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
         myOutput = open("Judge" + str(judgeNum) + "/data.out", "w")
         anyErrors = open("errors.txt", "w")
         
-        proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
-        proc.wait(timelim + 3) # Add 3 seconds of grace time
+        ts = "{x:.3f}".format(x = timelim)
+
+        try:
+            proc = subprocess.Popen(cmdrun, stdin=myInput, stdout=myOutput, stderr=anyErrors, shell=True)
+            proc.wait(timelim + 3) # Add 3 seconds of grace time
+        except subprocess.TimeoutExpired:
+            return ("Time Limit Exceeded [>" + str(ts) + " seconds]", timelim, 0)
 
         getIsolate = getIsolateTime(judgeNum, settings)
         ft = getIsolate[0]
@@ -151,9 +156,8 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
         myOutput.close()
         anyErrors.close()
 
-        ts = "{x:.3f}".format(x = timelim)
+        
         memTaken = fm / 1024
-
         if exitcode == -1:
             return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
         elif not exitcode == 0:
