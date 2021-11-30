@@ -89,7 +89,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             batmsg = ""
             verd = ""
 
-            if tot <= 20:
+            if tot <= 30:
                 for i in range(1, batches[b] + 1):
                     verd = ""
                     if not sk:
