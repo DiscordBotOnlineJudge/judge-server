@@ -4,6 +4,8 @@ import asyncio
 import os
 import sys
 
+THRESHOLD = 30
+
 def writeCode(source, filename):
     f = open(filename, "w")
     f.write(source)
@@ -81,7 +83,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         totalTime = 0
         processMem = 0
 
-        if tot > 20:
+        if tot > THRESHOLD:
             interval //= 2
 
         while b < len(batches):
@@ -89,7 +91,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             batmsg = ""
             verd = ""
 
-            if tot <= 30:
+            if tot <= THRESHOLD:
                 for i in range(1, batches[b] + 1):
                     verd = ""
                     if not sk:
@@ -180,7 +182,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
 
             if ce:
                 break
-            if tot > 20:
+            if tot > THRESHOLD:
                 b += 1
                 continue
             if not sk:
