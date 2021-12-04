@@ -113,7 +113,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             comp = subprocess.Popen(compl, stdout=stdout, stderr=anyErrors, shell=True)
 
             try:
-                comp.wait(timeout = 5)
+                comp.wait(timeout = 10)
                 anyErrors.flush()
                 anyErrors.close()
                 stdout.flush()
