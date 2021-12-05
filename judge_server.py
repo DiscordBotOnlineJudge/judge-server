@@ -24,6 +24,7 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
         return self.__class__.__name__
 
     def judge(self, request, context):
+        print("Received judge request")
         try:
             score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
         except:
