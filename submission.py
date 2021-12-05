@@ -214,3 +214,5 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
             f.flush()
             f.close()
+
+        return (-1, "```diff\n- Internal error occurred on Judge" + "\n\n(Status: COMPLETED)```")
