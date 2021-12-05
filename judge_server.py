@@ -14,8 +14,6 @@ judgeSettings = yaml.safe_load(open("JudgeSetup.yaml", "r"))
 judgeNum = judgeSettings['JudgeNum']
 portNum = judgeSettings['port']
 
-lang_dict = yaml.safe_load(open("lang.yaml", "r"))
-
 class Listener(judge_pb2_grpc.JudgeServiceServicer):
     def __init__(self):
         pass
@@ -26,7 +24,7 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
     def judge(self, request, context):
         print("Received judge request")
         try:
-            score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
+            score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment)
         except:
             print("Fatal error:\n" + sys.exc_info()[0])
         return judge_pb2.SubmissionResult(finalScore = score[0], error = open("errors.txt").read(1000), finalOutput = score[1])

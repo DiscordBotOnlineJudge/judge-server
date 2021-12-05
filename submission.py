@@ -17,10 +17,8 @@ def clean(src):
 def edit(settings, content, judgeNum):
     settings.update_one({"type":"judge", "num":judgeNum}, {"$set":{"output":content}})
 
-def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, lang_dict) -> int:
+def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment) -> int:
     try:
-        print("Flag 1")
-
         settings.insert_one({"type":"use", "author":username, "message":source})
         lang_data = settings.find_one({"type":"lang", "name":lang})
         filename = lang_data['filename']
@@ -33,8 +31,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             # Clean up code from all backticks
             cleaned = clean(source)
             writeCode(cleaned, "Judge" + str(judgeNum) + "/" + filename)
-
-        print("Flag 2")
 
         judging.get_file(storage_client, "TestData/" + str(problem) + "/cases.txt", "Judge" + str(judgeNum) + "/cases.txt")
         problemData = open("Judge" + str(judgeNum) + "/cases.txt", "r")
@@ -53,8 +49,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         timelims = list(map(float, problemData.readline().split()))
         timelim = None
 
-        print("Flag 3")
-
         id = lang_data['id']
 
         if len(timelims) == 1:
@@ -67,8 +61,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
 
         problemData.close()
 
-        print("Flag 4")
-
         msg = "EXECUTION RESULTS\n" + username + "'s submission for " + problem + " in " + lang + "\n" + ("Time limit for this problem in " + lang + ": {x:.2f} seconds".format(x = timelim)) + "\nRunning on Judging Server #" + str(judgeNum) + "\n\n"
         curmsg = ("```" + msg + "(Status: COMPILING)```")
         
@@ -77,8 +69,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         localPath = settings.find_one({"type":"judge", "num":judgeNum})['path']
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
         cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath)
-
-        print(compl, cmdrun, filename, sep='\n')
 
         finalscore = 0
         ce = False
@@ -93,8 +83,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
 
         if tot > THRESHOLD:
             interval //= 2
-
-        print("Flag 6")
 
         while b < len(batches):
             sk = False
@@ -189,8 +177,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                 if not sk and not ce:
                     msg += "+ Batch #" + str(b + 1) + " (" + str(points[b]) + "/" + str(points[b]) + " points)\n" + "+     All cases passed (" + str(batches[b]) + " cases in " + "{x:.3f}s, {m:.2f} MB)".format(x = tt, m = avgMem / batches[b]) + "\n\n"
                     finalscore += points[b]
-
-            print("Flag 6")
 
             if ce:
                 break
