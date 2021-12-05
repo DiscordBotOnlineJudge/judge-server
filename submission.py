@@ -20,7 +20,8 @@ def edit(settings, content, judgeNum):
 def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, lang_dict) -> int:
     try:
         settings.insert_one({"type":"use", "author":username, "message":source})
-        filename = lang_dict[2]
+        lang_data = settings.find_one({"type":"lang", "name":lang})
+        filename = lang_data['filename']
         
         cleaned = ""
         if attachment:
@@ -48,7 +49,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         timelims = list(map(float, problemData.readline().split()))
         timelim = None
 
-        lang_data = settings.find_one({"type":"lang", "name":lang})
         id = lang_data['id']
 
         if len(timelims) == 1:
