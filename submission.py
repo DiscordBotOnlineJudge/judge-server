@@ -70,6 +70,9 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
         cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath)
 
+        print(compl, cmdrun, filename, sep="\n")
+        os.system("which rustc")
+
         finalscore = 0
         ce = False
 
@@ -121,10 +124,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         sk = True
 
                     if sk and batches[b] > 1:
-                        #if batches[b] > 1:
                         edit(settings, ("```diff\n" + msg + "- Batch #" + str(b + 1) + " (0/" + str(points[b]) + " points)\n" + batmsg + "\n(Status: RUNNING)```"), judgeNum)
-                        #else:
-                            #await curmsg.edit(content = ("```diff\n" + msg + "- Test case #" + str(b + 1) + ": " + (" " if extra else "") + verd + " (0/" + str(points[b]) + " points)\n\n(Status: RUNNING)```"))
                         break
                     else:
                         if batches[b] > 1:
