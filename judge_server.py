@@ -24,7 +24,10 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
         return self.__class__.__name__
 
     def judge(self, request, context):
-        score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
+        try:
+            score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, lang_dict[request.lang])
+        except:
+            print("Fatal error:\n" + sys.exc_info()[0])
         return judge_pb2.SubmissionResult(finalScore = score[0], error = open("errors.txt").read(1000), finalOutput = score[1])
 
 
