@@ -70,6 +70,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
         cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath)
 
+        print(compl, cmdrun, filename, sep='\n')
+
         finalscore = 0
         ce = False
 
