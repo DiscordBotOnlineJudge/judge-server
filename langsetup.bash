@@ -15,4 +15,4 @@ cd rickroll
 cargo build --release
 sudo cp target/release/rickroll /usr/bin/rickroll
 sudo npm install -g typescript
-sudo npm i --save-dev @types/node`.
+sudo npm i --save-dev @types/node

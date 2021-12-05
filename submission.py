@@ -48,7 +48,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         timelims = list(map(float, problemData.readline().split()))
         timelim = None
 
-        id = settings.find_one({"type":"lang", "name":lang})['id']
+        lang_data = settings.find_one({"type":"lang", "name":lang})
+        id = lang_data['id']
 
         if len(timelims) == 1:
             timelim = timelims[0]
@@ -56,10 +57,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             timelim = timelims[id]
 
         inds = problemData.readline()
-        individual = False
-        if len(inds) > 0:
-            arr = inds.split()
-            individual = arr[id].strip() == 'T'
+        individual = True
 
         problemData.close()
 
@@ -69,8 +67,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         edit(settings, curmsg, judgeNum)
 
         localPath = settings.find_one({"type":"judge", "num":judgeNum})['path']
-        compl = lang_dict[0].format(x = judgeNum, path = localPath)
-        cmdrun = lang_dict[1].format(x = judgeNum, t = timelim, path = localPath)
+        compl = lang_data['compl'].format(x = judgeNum, path = localPath)
+        cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath)
 
         finalscore = 0
         ce = False
