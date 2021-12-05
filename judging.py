@@ -10,6 +10,8 @@ import resource
 import yaml
 import sys
 
+compTimeout = 15
+
 def limit_virtual_memory():
     MAX_VIRTUAL_MEMORY = 256 * 1024 * 1024 # MB
     resource.setrlimit(resource.RLIMIT_AS, (MAX_VIRTUAL_MEMORY, resource.RLIM_INFINITY))
@@ -113,7 +115,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             comp = subprocess.Popen(compl, stdout=stdout, stderr=anyErrors, shell=True)
 
             try:
-                comp.wait(timeout = 10)
+                comp.wait(timeout = compTimeout)
                 anyErrors.flush()
                 anyErrors.close()
                 stdout.flush()
