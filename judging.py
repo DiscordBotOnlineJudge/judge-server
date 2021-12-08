@@ -36,6 +36,11 @@ def cleanNullChars(output):
 
 def checkEqual(problem, bat, case, judgeNum, storage_client):
     try:
+        write_file(storage_client, problem, bat, case, "out", "Judge" + str(judgeNum) + "/expected.out")
+    except:
+        pass
+
+    try:
         get_file(storage_client, "TestData/" + problem + "/checker.py", "Judge" + str(judgeNum) + "/checker.py")
         myOutput = open("Judge" + str(judgeNum) + "/verdict.out", "w") 
 
@@ -56,8 +61,6 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
             return v
 
     except:
-        write_file(storage_client, problem, bat, case, "out", "Judge" + str(judgeNum) + "/expected.out")
-
         cor = open("Judge" + str(judgeNum) + "/expected.out", "r")
         giv = open("Judge" + str(judgeNum) + "/data.out", "r")
 
