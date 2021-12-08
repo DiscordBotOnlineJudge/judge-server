@@ -18,7 +18,7 @@ def limit_virtual_memory():
 
 def cleanChecker(fn, jn):
     f = open(fn, "r")
-    src = f.read().replace("data.in", "Judge" + jn + "/data.in").replace("data.out", "Judge" + jn + "/data.out")
+    src = f.read().replace("data.in", "Judge" + jn + "/data.in").replace("data.out", "Judge" + jn + "/data.out").replace("expected.out", "Judge" + jn + "/expected.out")
     f.flush()
     f.close()
 
