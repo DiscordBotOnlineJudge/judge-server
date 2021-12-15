@@ -101,8 +101,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                     if not sk and verd.split()[0] == "Compilation":
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
                         pe = open("Judge" + str(judgeNum) + "/stdout.txt", "r")
-                        msg += "- " + verd + "\n" + comp.read(1000)
-                        psrc = pe.read(1000)
+                        msg += "- " + verd + "\n" + comp.read(1700)
+                        psrc = pe.read(1700)
                         if len(psrc) > 0:
                             msg += "\n" + psrc
                         msg += "\n"
