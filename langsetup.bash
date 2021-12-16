@@ -12,8 +12,7 @@ sudo apt-get install ruby -y
 sudo apt-get install fpc -y
 curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
 sudo apt install -y nodejs
-sudo npm install coffee-script
-sudo apt-get install git
+sudo npm install coffeescript
 cd
 git clone https://github.com/BattleMage0231/rickroll.git
 cd rickroll
