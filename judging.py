@@ -112,7 +112,7 @@ def getIsolateTime(judgeNum, settings):
             f.close()
 
 def get_public_class(submission_contents):
-    for line in submission_contents:
+    for line in submission_contents.split("\n"):
         arr = line.split()
         for i in range(len(arr) - 2):
             if arr[i] == "public" and arr[i + 1] == "class":
