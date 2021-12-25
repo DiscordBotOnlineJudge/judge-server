@@ -116,7 +116,12 @@ def get_public_class(submission_contents):
         arr = line.split()
         for i in range(len(arr) - 2):
             if arr[i] == "public" and arr[i + 1] == "class":
-                return arr[i + 2]
+                name = ""
+                for chr in range(len(arr[i + 2])):
+                    if arr[i + 2][chr] == "{":
+                        break
+                    name += arr[i + 2][chr]
+                return name
     return None
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
