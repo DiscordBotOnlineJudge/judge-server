@@ -70,6 +70,16 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
         cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath)
 
+        public_class = None
+
+        if lang == "java":
+            public_class = judging.get_public_class(open("Judge" + str(judgeNum) + "/java/Main.java", "r").read())
+            if public_class is None:
+                return ("Compilation Error: Public class not found. Please declare your main class as a public class.", 0, 0)
+            os.system("mv " + "Judge" + str(judgeNum) + "/java/Main.java " + "Judge" + str(judgeNum) + "/java/" + public_class + ".java")
+            compl = compl.replace("Main.java", public_class + ".java")
+            cmdrun = cmdrun.replace("Main", public_class)
+
         finalscore = 0
         ce = False
 
@@ -92,13 +102,13 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             if tot <= THRESHOLD:
                 for i in range(1, batches[b] + 1):
                     verd = ""
-                    if not sk:
+                    if not sk and not public_class is None:
                         vv = judging.judge(problem, b + 1, i, compl, cmdrun, judgeNum, timelim, username, storage_client, settings)
                         verd = vv[0]
                         totalTime += vv[1]
                         processMem = max(processMem, vv[2])
 
-                    if not sk and verd.split()[0] == "Compilation":
+                    if not sk and (verd.split()[0] == "Compilation" or public_class is None):
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
                         pe = open("Judge" + str(judgeNum) + "/stdout.txt", "r")
                         msg += "- " + verd + "\n" + comp.read(1700)
@@ -140,7 +150,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                     edit(settings, ("```diff\n" + msg + "  Batch #" + str(b + 1) + " (?/" + str(points[b]) + " points)\n      Pending judgement on case " + str(i) + "\n\n(Status: RUNNING)```"), judgeNum)
 
                     verd = ""
-                    if not sk:
+                    if not sk and not public_class is None:
                         vv = judging.judge(problem, b + 1, i, compl, cmdrun, judgeNum, timelim, username, storage_client, settings)
                         verd = vv[0]
                         tt += vv[1]
@@ -149,7 +159,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         totalTime += vv[1]
                         processMem = max(processMem, vv[2])
 
-                    if not sk and verd.split()[0] == "Compilation":
+                    if not sk and (verd.split()[0] == "Compilation" or public_class is None):
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
                         pe = open("Judge" + str(judgeNum) + "/stdout.txt", "r")
                         msg += "- " + verd + "\n" + comp.read(1000)
