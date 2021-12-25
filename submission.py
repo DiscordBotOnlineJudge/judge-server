@@ -192,6 +192,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                 else:
                     msg += "- Batch #" + str(b + 1) + " (0/" + str(points[b]) + " points)\n" + batmsg + "\n"
             b += 1
+
+        os.system("rm -r Judge" + str(judgeNum) + "/java/*") # Remove all java files and classes
         
         if batches[len(batches) - 1] == 1:
             msg += "\n"

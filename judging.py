@@ -133,10 +133,10 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             stdout = open("Judge" + str(judgeNum) + "/stdout.txt", "w")
 
             if "javac" in compl:
-                public_class = get_public_class(open("Judge" + str(judgeNum) + "/Main.java", "r").read())
+                public_class = get_public_class(open("Judge" + str(judgeNum) + "/java/Main.java", "r").read())
                 if public_class is None:
                     return ("Compilation Error: Public class not found. Please declare your main class as a public class.", 0, 0)
-                os.system("mv " + "Judge" + str(judgeNum) + "/Main.java " + "Judge" + str(judgeNum) + "/" + public_class + ".java")
+                os.system("mv " + "Judge" + str(judgeNum) + "/java/Main.java " + "Judge" + str(judgeNum) + "/java/" + public_class + ".java")
                 compl = compl.replace("Main.java", public_class + ".java")
                 cmdrun = cmdrun.replace("Main", public_class)
 
