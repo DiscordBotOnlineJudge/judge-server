@@ -112,8 +112,12 @@ def getIsolateTime(judgeNum, settings):
             f.close()
 
 def get_public_class(submission_contents):
-    public_class_regex = re.compile(r'public class ([^ \n-/\\{}"\'`~<>]*)')
-    public_class_match = re.search(public_class_regex, submission_contents)
+    for line in submission_contents:
+        arr = line.split()
+        for i in range(len(arr) - 2):
+            if arr[i] == "public" and arr[i + 1] == "class":
+                return arr[i + 2]
+    return None
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
     public_class = None
