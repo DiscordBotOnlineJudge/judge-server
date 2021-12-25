@@ -9,6 +9,7 @@ import asyncio
 import resource
 import yaml
 import sys
+import re
 
 compTimeout = 15
 
@@ -110,11 +111,26 @@ def getIsolateTime(judgeNum, settings):
             f.flush()
             f.close()
 
+def get_public_class(submission_contents):
+    public_class_regex = re.compile(r'public class ([^ \n-/\\{}"\'`~<>]*)')
+    public_class_match = re.search(public_class_regex, submission_contents)
+
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
+    public_class = None
+
     try:
         if bat <= 1 and case <= 1 and len(compl) > 0:
             anyErrors = open("Judge" + str(judgeNum) + "/errors.txt", "w")
             stdout = open("Judge" + str(judgeNum) + "/stdout.txt", "w")
+
+            if "javac" in compl:
+                public_class = get_public_class(open("Judge" + str(judgeNum) + "/Main.java", "r").read())
+                if public_class is None:
+                    return ("Compilation Error: Public class not found. Please declare your main class as a public class.", 0, 0)
+                os.system("mv " + "Judge" + str(judgeNum) + "/Main.java " + "Judge" + str(judgeNum) + "/" + public_class + ".java")
+                compl = compl.replace("Main.java", public_class + ".java")
+                cmdrun = cmdrun.replace("Main", public_class)
+
             comp = subprocess.Popen(compl, stdout=stdout, stderr=anyErrors, shell=True)
 
             try:
