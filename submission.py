@@ -79,6 +79,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             os.system("mv " + "Judge" + str(judgeNum) + "/java/Main.java " + "Judge" + str(judgeNum) + "/java/" + public_class + ".java")
             compl = compl.replace("Main.java", public_class + ".java")
             cmdrun = cmdrun.replace("Main", public_class)
+        else:
+            public_class = ""
 
         finalscore = 0
         ce = False
