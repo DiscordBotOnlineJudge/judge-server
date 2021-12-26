@@ -75,7 +75,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         if lang == "java":
             public_class = judging.get_public_class(open("Judge" + str(judgeNum) + "/java/Main.java", "r").read())
             if public_class is None:
-                finalOutput = "```diff\n" + msg + "- Compilation Error: Public class not found.\n  Please declare your main class as a public class.\n\n(Status: COMPLETED)```"
+                finalOutput = "```diff\n" + msg + "- Compilation Error: Public class not found.\n  Please declare your main class as a public class.\n\n\n(Status: COMPLETED)```"
                 edit(settings, finalOutput, judgeNum)
                 return (0, finalOutput)
             os.system("mv " + "Judge" + str(judgeNum) + "/java/Main.java " + "Judge" + str(judgeNum) + "/java/" + public_class + ".java")
