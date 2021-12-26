@@ -108,7 +108,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         totalTime += vv[1]
                         processMem = max(processMem, vv[2])
 
-                    if not sk and (verd.split()[0] == "Compilation" or public_class is None):
+                    if not sk and (public_class is None or verd.split()[0] == "Compilation"):
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
                         pe = open("Judge" + str(judgeNum) + "/stdout.txt", "r")
                         msg += "- " + verd + "\n" + comp.read(1700)
@@ -159,7 +159,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         totalTime += vv[1]
                         processMem = max(processMem, vv[2])
 
-                    if not sk and (verd.split()[0] == "Compilation" or public_class is None):
+                    if not sk and (public_class is None or verd.split()[0] == "Compilation"):
                         comp = open("Judge" + str(judgeNum) + "/errors.txt", "r")
                         pe = open("Judge" + str(judgeNum) + "/stdout.txt", "r")
                         msg += "- " + verd + "\n" + comp.read(1000)
@@ -224,4 +224,5 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             f.flush()
             f.close()
 
+        edit(settings, "```diff\n- Internal error occurred on Judge" + "\n\n(Status: COMPLETED)```", judgeNum)
         return (-1, "```diff\n- Internal error occurred on Judge" + "\n\n(Status: COMPLETED)```")
