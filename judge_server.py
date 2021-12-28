@@ -39,7 +39,7 @@ def serve():
     storage_client = stc.get_bucket('discord-bot-oj-file-storage')
 
     # Pymongo Client
-    pswd = open("PASSWORD", "r").read().strip()
+    pswd = os.getenv("PASSWORD")
     cluster = MongoClient("mongodb+srv://onlineuser:$" + pswd + "@discord-bot-online-judg.7gm4i.mongodb.net/database?retryWrites=true&w=majority")
     db = cluster['database']
     global settings
