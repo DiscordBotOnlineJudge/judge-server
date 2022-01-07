@@ -6,16 +6,11 @@ import os
 import subprocess
 import math
 import asyncio
-import resource
 import yaml
 import sys
 import re
 
 compTimeout = 15
-
-def limit_virtual_memory():
-    MAX_VIRTUAL_MEMORY = 256 * 1024 * 1024 # MB
-    resource.setrlimit(resource.RLIMIT_AS, (MAX_VIRTUAL_MEMORY, resource.RLIM_INFINITY))
 
 def cleanChecker(fn, jn):
     f = open(fn, "r")

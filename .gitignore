@@ -5,3 +5,6 @@ newlang.yaml
 reload.sh
 lang.yaml
 lang.yaml
+__pycache__
+google-service-key.json
+JudgeSetup.yaml
