@@ -228,5 +228,5 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             f.flush()
             f.close()
 
-        edit(settings, "```diff\n- Internal error occurred on Judge" + "\n\n(Status: COMPLETED)```", judgeNum)
-        return (-1, "```diff\n- Internal error occurred on Judge" + "\n\n(Status: COMPLETED)```")
+        edit(settings, "```diff\n- Internal error occurred on Judge " + str(judgeNum) + "\n\n(Status: COMPLETED)```", judgeNum)
+        return (-1, "```diff\n- Internal error occurred on Judge " + str(judgeNum) + "\n\n(Status: COMPLETED)```")
