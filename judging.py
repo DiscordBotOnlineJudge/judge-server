@@ -93,7 +93,7 @@ def getIsolateTime(judgeNum, settings):
                 t = float(line[line.find(":") + 1:].strip())
             elif line.startswith("cg-mem"):
                 mem = float(line[line.find(":") + 1:].strip())
-            elif line.startswith("exitcode"):
+            elif line.startswith("exit"):
                 exitcode = int(line[line.find(":") + 1:].strip())
         meta.close()
         return (t, mem, exitcode)
