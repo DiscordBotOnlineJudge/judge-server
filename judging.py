@@ -173,16 +173,19 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
 
         
         memTaken = fm / 1024
-        if exitcode == -1:
-            return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
-        elif not exitcode == 0:
-            return ("Runtime/Memory Error (Exit code " + str(exitcode) + ") [" + taken + " seconds]", ft, memTaken)
-        
+
         memMsg = ""
         if fm >= 1000:
             memMsg = ", {x:.2f} MB".format(x = fm / 1024) # Convert from KB to MB
         elif fm >= 0:
             memMsg = ", {x:.2f} KB".format(x = fm)
+
+        if exitcode == -1:
+            return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
+        elif exitcode == 9:
+            return ("Memory Limit Exceeded [" + taken + " seconds" + memMsg + "]", ft, memTaken)
+        elif not exitcode == 0:
+            return ("Runtime Error (Exit code " + str(exitcode) + ") [" + taken + " seconds]", ft, memTaken)
 
         try:
             if checkEqual(problem, bat, case, judgeNum, sc):
