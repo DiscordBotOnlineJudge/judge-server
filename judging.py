@@ -176,7 +176,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
         if exitcode == -1:
             return ("Time Limit Exceeded [>" + str(ts) + " seconds]", ft, memTaken)
         elif not exitcode == 0:
-            return ("Runtime/Memory Error (Exit code " + str(poll) + ") [" + taken + " seconds]", ft, memTaken)
+            return ("Runtime/Memory Error (Exit code " + str(exitcode) + ") [" + taken + " seconds]", ft, memTaken)
         
         memMsg = ""
         if fm >= 1000:
