@@ -175,7 +175,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
         memTaken = fm / 1024
 
         memMsg = ""
-        if fm >= 1000:
+        if fm >= 1024:
             memMsg = ", {x:.2f} MB".format(x = fm / 1024) # Convert from KB to MB
         elif fm >= 0:
             memMsg = ", {x:.2f} KB".format(x = fm)
