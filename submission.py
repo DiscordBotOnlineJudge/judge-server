@@ -55,7 +55,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
 
         memlim = resources['memory-limit']['general']
         if lang in resources['memory-limit']:
-            timelim = resources['memory-limit'][lang]
+            memlim = resources['memory-limit'][lang]
 
         problemData.close()
 
