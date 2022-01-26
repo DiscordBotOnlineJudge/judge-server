@@ -1,5 +1,6 @@
 import judging
 import math
+import yaml
 import asyncio
 import os
 import sys
@@ -33,6 +34,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             writeCode(cleaned, "Judge" + str(judgeNum) + "/" + filename)
 
         judging.get_file(storage_client, "TestData/" + str(problem) + "/cases.txt", "Judge" + str(judgeNum) + "/cases.txt")
+        judging.get_file(storage_client, "TestData/" + str(problem) + "/resources.yaml", "Judge" + str(judgeNum) + "/resources.yaml")
         problemData = open("Judge" + str(judgeNum) + "/cases.txt", "r")
 
         batches = list(map(int, problemData.readline().split()))
@@ -45,21 +47,19 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             extra = True
 
         points = list(map(int, problemData.readline().split()))
+        resources = yaml.safe_load(open("Judge" + str(judgeNum) + "/resources.yaml", "r").read())
 
-        timelims = list(map(float, problemData.readline().split()))
-        timelim = None
+        timelim = resources['time-limit']['general']
+        if lang in resources['time-limit']:
+            timelim = resources['time-limit'][lang]
 
-        id = lang_data['id']
+        memlim = resources['memory-limit']['general']
+        if lang in resources['memory-limit']:
+            timelim = resources['memory-limit'][lang]
 
-        if len(timelims) == 1:
-            timelim = timelims[0]
-        else:
-            timelim = timelims[id]
-
-        inds = problemData.readline()
         individual = True
-
         problemData.close()
+        resources.close()
 
         msg = "EXECUTION RESULTS\n" + username + "'s submission for " + problem + " in " + lang + "\n" + ("Time limit for this problem in " + lang + ": {x:.2f} seconds".format(x = timelim)) + "\nRunning on Judging Server #" + str(judgeNum) + "\n\n"
         curmsg = ("```" + msg + "(Status: COMPILING)```")
@@ -68,7 +68,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
 
         localPath = os.getcwd()
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
-        cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath, mem = 262144)
+        cmdrun = lang_data['run'].format(x = judgeNum, t = timelim, path = localPath, mem = memlim)
 
         public_class = None
 

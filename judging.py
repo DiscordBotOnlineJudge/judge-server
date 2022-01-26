@@ -171,7 +171,6 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
         myOutput.close()
         anyErrors.close()
 
-        
         memTaken = fm / 1024
 
         memMsg = ""
