@@ -59,7 +59,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
 
         problemData.close()
 
-        msg = "EXECUTION RESULTS\n" + username + "'s submission for " + problem + " in " + lang + "\n" + ("Time limit for this problem in " + lang + ": {x:.2f} seconds".format(x = timelim)) + "\nRunning on Judging Server #" + str(judgeNum) + "\n\n"
+        msg = "EXECUTION RESULTS\n" + username + "'s submission for " + problem + " in " + lang + "\n" + ("Time limit in " + lang + ": {x:.2f} seconds, ".format(x = timelim)) + ("Memory limit in " + lang + ": " + str(memlim // 1024) + " MB") + "\nRunning on Judging Server #" + str(judgeNum) + "\n\n"
         curmsg = ("```" + msg + "(Status: COMPILING)```")
         
         edit(settings, curmsg, judgeNum)
