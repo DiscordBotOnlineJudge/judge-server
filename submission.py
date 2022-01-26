@@ -57,9 +57,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         if lang in resources['memory-limit']:
             timelim = resources['memory-limit'][lang]
 
-        individual = True
         problemData.close()
-        resources.close()
 
         msg = "EXECUTION RESULTS\n" + username + "'s submission for " + problem + " in " + lang + "\n" + ("Time limit for this problem in " + lang + ": {x:.2f} seconds".format(x = timelim)) + "\nRunning on Judging Server #" + str(judgeNum) + "\n\n"
         curmsg = ("```" + msg + "(Status: COMPILING)```")
