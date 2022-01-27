@@ -14,9 +14,14 @@ mkdir Judge1
 ```
 
 Change the values in `JudgeSetup.yaml` to the settings you would like:
-```
+```yaml
 JudgeNum: [judge number]
 port: [port to host the server on]
+```
+
+Run the language setup batch file:
+```bash
+bash langsetup.bash
 ```
 
 ## Running the judge-server listener
