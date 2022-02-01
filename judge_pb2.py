@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bjudge.proto\"h\n\x11SubmissionRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x0e\n\x06source\x18\x02 \x01(\t\x12\x0c\n\x04lang\x18\x03 \x01(\t\x12\x0f\n\x07problem\x18\x04 \x01(\t\x12\x12\n\nattachment\x18\x05 \x01(\x08\"J\n\x10SubmissionResult\x12\x12\n\nfinalScore\x18\x01 \x01(\x05\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x13\n\x0b\x66inalOutput\x18\x03 \x01(\t2@\n\x0cJudgeService\x12\x30\n\x05judge\x12\x12.SubmissionRequest\x1a\x11.SubmissionResult\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0bjudge.proto\"x\n\x11SubmissionRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x0e\n\x06source\x18\x02 \x01(\t\x12\x0c\n\x04lang\x18\x03 \x01(\t\x12\x0f\n\x07problem\x18\x04 \x01(\t\x12\x12\n\nattachment\x18\x05 \x01(\x08\x12\x0e\n\x06sub_id\x18\x06 \x01(\x05\"J\n\x10SubmissionResult\x12\x12\n\nfinalScore\x18\x01 \x01(\x05\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x13\n\x0b\x66inalOutput\x18\x03 \x01(\t2@\n\x0cJudgeService\x12\x30\n\x05judge\x12\x12.SubmissionRequest\x1a\x11.SubmissionResult\"\x00\x62\x06proto3'
 )
 
 
@@ -68,6 +68,13 @@ _SUBMISSIONREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sub_id', full_name='SubmissionRequest.sub_id', index=5,
+      number=6, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -81,7 +88,7 @@ _SUBMISSIONREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=15,
-  serialized_end=119,
+  serialized_end=135,
 )
 
 
@@ -126,8 +133,8 @@ _SUBMISSIONRESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=121,
-  serialized_end=195,
+  serialized_start=137,
+  serialized_end=211,
 )
 
 DESCRIPTOR.message_types_by_name['SubmissionRequest'] = _SUBMISSIONREQUEST
@@ -157,8 +164,8 @@ _JUDGESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=197,
-  serialized_end=261,
+  serialized_start=213,
+  serialized_end=277,
   methods=[
   _descriptor.MethodDescriptor(
     name='judge',

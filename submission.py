@@ -15,12 +15,11 @@ def writeCode(source, filename):
 def clean(src):
     return src.replace("`", "")
 
-def edit(settings, content, judgeNum):
-    settings.update_one({"type":"judge", "num":judgeNum}, {"$set":{"output":content}})
+def edit(settings, content, sub_id):
+    settings.update_one({"type":"submission", "id":sub_id}, {"$set":{"output":content}})
 
-def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment) -> int:
+def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, sub_id) -> int:
     try:
-        settings.insert_one({"type":"use", "author":username, "message":source})
         lang_data = settings.find_one({"type":"lang", "name":lang})
         filename = lang_data['filename']
         
@@ -62,7 +61,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         msg = "EXECUTION RESULTS\n" + username + "'s submission for " + problem + " in " + lang + "\n" + ("Time limit in " + lang + ": {x:.2f} seconds, ".format(x = timelim)) + ("Memory limit in " + lang + ": " + str(memlim // 1024) + " MB") + "\nRunning on Judging Server #" + str(judgeNum) + "\n\n"
         curmsg = ("```" + msg + "(Status: COMPILING)```")
         
-        edit(settings, curmsg, judgeNum)
+        edit(settings, curmsg, sub_id)
 
         localPath = os.getcwd()
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
@@ -74,7 +73,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             public_class = judging.get_public_class(open("Judge" + str(judgeNum) + "/java/Main.java", "r").read())
             if public_class is None:
                 finalOutput = "```diff\n" + msg + "- Compilation Error: Public class not found.\n  Please declare your main class as a public class.\n\n\n(Status: COMPLETED)```"
-                edit(settings, finalOutput, judgeNum)
+                edit(settings, finalOutput, sub_id)
                 return (0, finalOutput)
             os.system("mv " + "Judge" + str(judgeNum) + "/java/Main.java " + "Judge" + str(judgeNum) + "/java/" + public_class + ".java")
             compl = compl.replace("Main.java", public_class + ".java")
@@ -133,23 +132,23 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                         sk = True
 
                     if sk and batches[b] > 1:
-                        edit(settings, ("```diff\n" + msg + "- Batch #" + str(b + 1) + " (0/" + str(points[b]) + " points)\n" + batmsg + "\n(Status: RUNNING)```"), judgeNum)
+                        edit(settings, ("```diff\n" + msg + "- Batch #" + str(b + 1) + " (0/" + str(points[b]) + " points)\n" + batmsg + "\n(Status: RUNNING)```"), sub_id)
                         break
                     else:
                         if batches[b] > 1:
-                            edit(settings, ("```diff\n" + msg + "+ Batch #" + str(b + 1) + " (" + str(points[b]) + "/" + str(points[b]) + " points)\n" + batmsg + "\n(Status: RUNNING)```"), judgeNum)
+                            edit(settings, ("```diff\n" + msg + "+ Batch #" + str(b + 1) + " (" + str(points[b]) + "/" + str(points[b]) + " points)\n" + batmsg + "\n(Status: RUNNING)```"), sub_id)
                         else:
                             if sk:
-                                edit(settings, ("```diff\n" + msg + "- Test case #" + str(b + 1) + ": " + (" " if (extra and b < 9) else "") + verd + " (0/" + str(points[b]) + " points)\n\n(Status: RUNNING)```"), judgeNum)
+                                edit(settings, ("```diff\n" + msg + "- Test case #" + str(b + 1) + ": " + (" " if (extra and b < 9) else "") + verd + " (0/" + str(points[b]) + " points)\n\n(Status: RUNNING)```"), sub_id)
                             else:
-                                edit(settings, ("```diff\n" + msg + "+ Test case #" + str(b + 1) + ": " + (" " if (extra and b < 9) else "") + verd + " (" + str(points[b]) + "/" + str(points[b]) + " points)\n\n(Status: RUNNING)```"), judgeNum)
+                                edit(settings, ("```diff\n" + msg + "+ Test case #" + str(b + 1) + ": " + (" " if (extra and b < 9) else "") + verd + " (" + str(points[b]) + "/" + str(points[b]) + " points)\n\n(Status: RUNNING)```"), sub_id)
 
                         cnt += 1
             else:
                 tt = 0
                 avgMem = 0
                 for i in range(1, batches[b] + 1):
-                    edit(settings, ("```diff\n" + msg + "  Batch #" + str(b + 1) + " (?/" + str(points[b]) + " points)\n      Pending judgement on case " + str(i) + "\n\n(Status: RUNNING)```"), judgeNum)
+                    edit(settings, ("```diff\n" + msg + "  Batch #" + str(b + 1) + " (?/" + str(points[b]) + " points)\n      Pending judgement on case " + str(i) + "\n\n(Status: RUNNING)```"), sub_id)
 
                     verd = ""
                     if not sk and not public_class is None:
@@ -210,7 +209,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         if batches[len(batches) - 1] == 1:
             msg += "\n"
         msg += "\nFinal Score: " + str(finalscore) + " / 100\nExecution finished using {taken:.3f} seconds, {mem:.2f} MB".format(taken = totalTime, mem = processMem)
-        edit(settings, ("```diff\n" + msg + "\n(Status: COMPLETED)```"), judgeNum)
+        edit(settings, ("```diff\n" + msg + "\n(Status: COMPLETED)```"), sub_id)
 
         finalOutput = ("```diff\n" + msg + "\n(Status: COMPLETED)```")
         if ce:
@@ -226,5 +225,5 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             f.flush()
             f.close()
 
-        edit(settings, "```diff\n- Internal error occurred on Judge " + str(judgeNum) + "\n\n(Status: COMPLETED)```", judgeNum)
+        edit(settings, "```diff\n- Internal error occurred on Judge " + str(judgeNum) + "\n\n(Status: COMPLETED)```", sub_id)
         return (-1, "```diff\n- Internal error occurred on Judge " + str(judgeNum) + "\n\n(Status: COMPLETED)```")

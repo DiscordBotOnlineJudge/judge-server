@@ -12,6 +12,7 @@ message SubmissionRequest {
     string lang = 3;
     string problem = 4;
     bool attachment = 5;
+    int32 sub_id = 6;
 }
 
 message SubmissionResult {
