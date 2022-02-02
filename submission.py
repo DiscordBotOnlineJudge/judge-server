@@ -16,7 +16,6 @@ def clean(src):
     return src.replace("`", "")
 
 def edit(settings, content, sub_id):
-    print("Updating submission status", sub_id)
     settings.update_one({"type":"submission", "id":sub_id}, {"$set":{"output":content}})
 
 def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, sub_id) -> int:
