@@ -4,6 +4,7 @@ import yaml
 import asyncio
 import os
 import sys
+import contests
 
 THRESHOLD = 30
 
@@ -20,6 +21,8 @@ def edit(settings, content, sub_id):
 
 def submit(storage_client, settings, username, source, lang, problem, judgeNum, attachment, sub_id) -> int:
     try:
+        ct = contests.current_time()
+
         lang_data = settings.find_one({"type":"lang", "name":lang})
         filename = lang_data['filename']
         
@@ -215,6 +218,10 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         if ce:
             return (-1, finalOutput)
             
+        problm = settings.find_one({"type":"problem", "name":problem})
+        if len(problm['contest']) > 0 and finalscore >= 0:
+            contests.updateScore(settings, problm['contest'], problem, username, finalscore, ct)
+
         return (finalscore, finalOutput)
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
