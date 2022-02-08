@@ -219,6 +219,10 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             return (-1, finalOutput)
             
         problm = settings.find_one({"type":"problem", "name":problem})
+
+        if finalscore == 100:
+            contests.addToProfile(settings, username, problem)
+
         if len(problm['contest']) > 0 and finalscore >= 0:
             contests.updateScore(settings, problm['contest'], problem, username, finalscore, ct)
 

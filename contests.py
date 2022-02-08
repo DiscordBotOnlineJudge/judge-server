@@ -91,3 +91,8 @@ def updateScore(settings, contest, problem, user, score, ct):
     time_bonus[num] = max(time_bonus[num], get_bonus(contest_len - elapsed, score))
 
     settings.update_one({"_id":post['_id']}, {"$set":{"solved":arr, "penalty":penalty, "time-bonus":time_bonus}})
+
+def addToProfile(settings, name, problem):
+    if settings.find_one({"type":"profile", "name":name}) is None:
+        settings.insert_one({"type":"profile", "name":name, "solved":[]})
+    settings.update_one({"type":"profile", "name":name}, {"$addToSet":{"solved":problem}})
