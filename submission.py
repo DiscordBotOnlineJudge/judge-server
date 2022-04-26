@@ -70,6 +70,8 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                 msg += f"----------Output----------\n{verdict[3]}\n--------------------------\n"
                 if verdict[0].startswith("Output incorrect"):
                     finalscore = "failed one or more tests"
+            else:
+                finalscore = "failed one or more tests"
 
             totalTime += verdict[1]
             processMem = max(processMem, verdict[2])
