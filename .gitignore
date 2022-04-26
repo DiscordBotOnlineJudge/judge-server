@@ -4,8 +4,11 @@ judge.service
 newlang.yaml
 reload.sh
 lang.yaml
-lang.yaml
 __pycache__
 google-service-key.json
 JudgeSetup.yaml
 JudgeSetup.yaml
+Judge5/
+InternalErrors.txt
+JudgeSetup.yaml
+venv/
