@@ -74,7 +74,7 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
                 print("Test point failed:", line)
                 return False
 
-        #giv.flush()
+        giv.flush()
         giv.close()
         cor.flush()
         cor.close()
