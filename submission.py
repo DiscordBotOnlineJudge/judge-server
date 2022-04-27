@@ -67,7 +67,7 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
                 break
 
             if len(verdict) == 4:
-                msg += f"----------Output----------\n{verdict[3]}\n--------------------------\n"
+                msg += f"----------Output----------\n{verdict[3]}\n--------------------------\n\n\n"
                 if verdict[0].startswith("Output incorrect"):
                     finalscore = "failed one or more tests"
             else:
