@@ -49,8 +49,6 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
         compl = lang_data['compl'].format(x = judgeNum, path = localPath)
         cmdrun = lang_data['run'].format(x = judgeNum, t = 5, path = localPath, mem = 262144)
 
-        print(compl, cmdrun, sep='\n')
-
         finalscore = "CORRECT"
         ce = False
 
