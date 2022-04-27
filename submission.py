@@ -62,18 +62,23 @@ def submit(storage_client, settings, username, source, lang, problem, judgeNum, 
             if verdict[0].startswith("Compilation Error"):
                 msg += open(f"Judge{judgeNum}/errors.txt", "r").read(500) + "\n"
                 finalscore = "failed one or more tests"
+                settings.update_one({"type":"submission", "id":sub_id}, {"$set":{"status":"Incorrect"}})
                 break
 
             if len(verdict) == 4:
                 msg += f"----------Output----------\n{verdict[3]}\n--------------------------\n\n\n"
                 if verdict[0].startswith("Output incorrect"):
                     finalscore = "failed one or more tests"
+                    settings.update_one({"type":"submission", "id":sub_id}, {"$set":{"status":"Incorrect"}})
             else:
                 finalscore = "failed one or more tests"
+                settings.update_one({"type":"submission", "id":sub_id}, {"$set":{"status":"Incorrect"}})
 
             totalTime += verdict[1]
             processMem = max(processMem, verdict[2])
 
+        if finalscore == "CORRECT":
+            settings.update_one({"type":"submission", "id":sub_id}, {"$set":{"status":"Correct"}})
         msg += "\nFinal verdict: " + finalscore + "\nExecution finished using {taken:.3f} seconds, {mem:.2f} MB".format(taken = totalTime, mem = processMem)
         edit(settings, ("```diff\n" + msg + "\n(Status: COMPLETED)```"), sub_id)
 
