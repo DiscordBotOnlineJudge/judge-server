@@ -70,14 +70,14 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
                 idx = pos + len(line)
             except ValueError:
                 print("Test point failed:", line)
-                return False
+                return (False, open("Judge" + str(judgeNum) + "/data.out", "r").read(1000))
 
         giv.flush()
         giv.close()
         cor.flush()
         cor.close()
 
-        return True
+        return (True, open("Judge" + str(judgeNum) + "/data.out", "r").read(1000))
 
 def get_file(storage_client, blobname, save):
     blob = storage_client.blob(blobname)
