@@ -53,7 +53,8 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
         myOutput.close()
 
         with open("Judge" + str(judgeNum) + "/verdict.out") as f:
-            return (f.read().strip().endswith("CORRECT"), f.read().strip())
+            verdict = f.read().strip()
+            return (verdict.endswith("CORRECT"), verdict)
 
     except:
         cor = open("Judge" + str(judgeNum) + "/expected.out", "r")
