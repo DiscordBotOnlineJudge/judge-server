@@ -53,9 +53,7 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
         myOutput.close()
 
         with open("Judge" + str(judgeNum) + "/verdict.out") as f:
-            v = f.read().strip() == "AC"
-            f.close()
-            return v
+            return (f.read().strip().endswith("CORRECT"), f.read().strip())
 
     except:
         cor = open("Judge" + str(judgeNum) + "/expected.out", "r")
@@ -198,8 +196,9 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             return ("Runtime Error (Exit code " + str(exitcode) + ") [" + taken + " seconds]", ft, memTaken)
 
         try:
-            verdict = "ACCEPTED" if checkEqual(problem, bat, case, judgeNum, sc) else "Output incorrect"
-            return (f"{verdict} [" + taken + " seconds" + memMsg + "]", ft, memTaken, open(f"Judge{judgeNum}/data.out", "r").read(1000))
+            res = checkEqual(problem, bat, case, judgeNum, sc)
+            verdict = "ACCEPTED" if res[0] else "Output incorrect"
+            return (f"{verdict} [" + taken + " seconds" + memMsg + "]", ft, memTaken, res[1])
         except Exception as e:
             print("Fatal error during grading:\n", str(e))
             return ("Internal System Error [" + taken + " seconds" + memMsg + "]", ft, memTaken)
