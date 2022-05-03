@@ -7,6 +7,7 @@ import judge_pb2_grpc
 import submission
 import yaml
 import sys
+from dotenv import load_dotenv
 from google.cloud import storage
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -63,4 +64,5 @@ def serve():
         server.stop(0)
 
 if __name__ == "__main__":
+    load_dotenv()
     serve()

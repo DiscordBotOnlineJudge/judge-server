@@ -1,6 +1,7 @@
 # This file contains methods that the judge uses to determine
 # a verdict for a submission test case
 
+from multiprocessing.sharedctypes import Value
 import time
 import os
 import subprocess
@@ -52,9 +53,8 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
         myOutput.close()
 
         with open("Judge" + str(judgeNum) + "/verdict.out") as f:
-            v = f.read().strip() == "AC"
-            f.close()
-            return v
+            verdict = f.read().strip()
+            return (verdict.endswith("CORRECT"), verdict)
 
     except:
         cor = open("Judge" + str(judgeNum) + "/expected.out", "r")
@@ -63,12 +63,22 @@ def checkEqual(problem, bat, case, judgeNum, storage_client):
         expect = cor.read()
         mine = giv.read()
 
+        idx = 0
+        for line in expect.split("\n"):
+            if not line: continue
+            try:
+                pos = mine.index(line, idx) 
+                idx = pos + len(line)
+            except ValueError:
+                print("Test point failed:", line)
+                return (False, open("Judge" + str(judgeNum) + "/data.out", "r").read(1000))
+
         giv.flush()
         giv.close()
         cor.flush()
         cor.close()
 
-        return cleanNullChars(expect).strip() == cleanNullChars(mine).strip()
+        return (True, open("Judge" + str(judgeNum) + "/data.out", "r").read(1000))
 
 def get_file(storage_client, blobname, save):
     blob = storage_client.blob(blobname)
@@ -116,7 +126,7 @@ def get_public_class(submission_contents):
 
 def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, settings):
     try:
-        if bat <= 1 and case <= 1 and len(compl) > 0:
+        if case == 1:
             anyErrors = open("Judge" + str(judgeNum) + "/errors.txt", "w")
             stdout = open("Judge" + str(judgeNum) + "/stdout.txt", "w")
 
@@ -132,7 +142,7 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
                 return ("Compilation Error: Request timed out", 0, 0)
 
             if not comp.poll() == 0:
-                return ("Compilation Error", 0, 0)
+                return ("Compilation Error (See error messages below)", 0, 0)
 
         write_file(sc, problem, bat, case, "in", "Judge" + str(judgeNum) + "/data.in")
 
@@ -182,10 +192,9 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             return ("Runtime Error (Exit code " + str(exitcode) + ") [" + taken + " seconds]", ft, memTaken)
 
         try:
-            if checkEqual(problem, bat, case, judgeNum, sc):
-                return ("Accepted [" + taken + " seconds" + memMsg + "]", ft, memTaken)
-            else:
-                return ("Wrong Answer [" + taken + " seconds" + memMsg + "]", ft, memTaken)
+            res = checkEqual(problem, bat, case, judgeNum, sc)
+            verdict = "ACCEPTED" if res[0] else "Output incorrect"
+            return (f"{verdict} [" + taken + " seconds" + memMsg + "]", ft, memTaken, res[1])
         except Exception as e:
             if "ERRORS_WEBHOOK" in os.environ:
                 requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
@@ -193,4 +202,5 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
     except Exception as e:
         if "ERRORS_WEBHOOK" in os.environ:
                 requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
+
     os.system("rm Judge" + str(judgeNum) + "/data.out")
