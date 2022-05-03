@@ -5,6 +5,7 @@ import asyncio
 import os
 import sys
 import contests
+import requests, traceback
 
 THRESHOLD = 30
 
