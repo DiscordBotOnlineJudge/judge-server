@@ -8,7 +8,7 @@ import math
 import asyncio
 import yaml
 import sys
-import re
+import traceback, requests
 
 compTimeout = 15
 
@@ -98,13 +98,8 @@ def getIsolateTime(judgeNum, settings):
         meta.close()
         return (t, mem, exitcode)
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
-        with open("InternalErrors.txt", "w") as f:
-            f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
-            f.flush()
-            f.close()
+        if "ERRORS_WEBHOOK" in os.environ:
+                requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
 
 def get_public_class(submission_contents):
     for line in submission_contents.split("\n"):
@@ -192,14 +187,10 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             else:
                 return ("Wrong Answer [" + taken + " seconds" + memMsg + "]", ft, memTaken)
         except Exception as e:
-            print("Fatal error during grading:\n", str(e))
+            if "ERRORS_WEBHOOK" in os.environ:
+                requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
             return ("Internal System Error [" + taken + " seconds" + memMsg + "]", ft, memTaken)
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
-        with open("InternalErrors.txt", "w") as f:
-            f.write(str(exc_type) + " " + str(fname) + " " + str(exc_tb.tb_lineno) + "\n")
-            f.flush()
-            f.close()
+        if "ERRORS_WEBHOOK" in os.environ:
+                requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
     os.system("rm Judge" + str(judgeNum) + "/data.out")
