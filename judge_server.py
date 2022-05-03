@@ -7,8 +7,10 @@ import judge_pb2_grpc
 import submission
 import yaml
 import sys
+from dotenv import load_dotenv
 from google.cloud import storage
 from pymongo import MongoClient
+import traceback, requests
 
 judgeSettings = yaml.safe_load(open("JudgeSetup.yaml", "r"))
 judgeNum = judgeSettings['JudgeNum']
@@ -26,7 +28,8 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
         try:
             score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, request.sub_id)
         except:
-            print("Fatal error:\n" + sys.exc_info()[0])
+            if "ERRORS_WEBHOOK" in os.environ:
+                requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
         return judge_pb2.SubmissionResult(finalScore = score[0], error = open("errors.txt").read(1000), finalOutput = score[1])
 
 
@@ -56,8 +59,9 @@ def serve():
         while True:
             time.sleep(10)
     except KeyboardInterrupt:
-        print("KeyboardInterrupt")
+        print("\nServer stopped with CTRL+C.")
         server.stop(0)
 
 if __name__ == "__main__":
+    load_dotenv()
     serve()
