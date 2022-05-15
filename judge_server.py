@@ -28,6 +28,7 @@ class Listener(judge_pb2_grpc.JudgeServiceServicer):
         try:
             score = submission.submit(storage_client, settings, request.username, request.source, request.lang, request.problem, judgeNum, request.attachment, request.sub_id)
         except:
+            settings.update_one({"type":"submission", "id":request.sub_id}, {"$set":{"output":f"An internal server error occurred on Judge {judgeNum}."}})
             if "ERRORS_WEBHOOK" in os.environ:
                 requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
         return judge_pb2.SubmissionResult(finalScore = score[0], error = open("errors.txt").read(1000), finalOutput = score[1])

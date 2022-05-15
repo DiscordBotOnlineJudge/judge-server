@@ -79,28 +79,24 @@ def write_file(storage_client, problem, bat, case, ext, save):
     blob.download_to_filename(save)
 
 def getIsolateTime(judgeNum, settings):
+    meta = None
+    t = -1
+    mem = -1
+    exitcode = -1
     try:
-        meta = None
-        t = -1
-        mem = -1
-        exitcode = -1
-        try:
-            meta = open("Judge" + str(judgeNum) + "/meta.yaml", "r")
-        except:
-            return (-1, -1, -1)
-        for line in meta:
-            if line.startswith("time"):
-                t = float(line[line.find(":") + 1:].strip())
-            elif line.startswith("cg-mem"):
-                mem = float(line[line.find(":") + 1:].strip())
-            elif line.startswith("exit"):
-                exitcode = int(line[line.find(":") + 1:].strip())
-        meta.close()
-        return (t, mem, exitcode)
-    except Exception as e:
-        if "ERRORS_WEBHOOK" in os.environ:
-                requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
-
+        meta = open("Judge" + str(judgeNum) + "/meta.yaml", "r")
+    except:
+        return (-1, -1, -1)
+    for line in meta:
+        if line.startswith("time"):
+            t = float(line[line.find(":") + 1:].strip())
+        elif line.startswith("cg-mem"):
+            mem = float(line[line.find(":") + 1:].strip())
+        elif line.startswith("exit"):
+            exitcode = int(line[line.find(":") + 1:].strip())
+    meta.close()
+    return (t, mem, exitcode)
+        
 def get_public_class(submission_contents):
     for line in submission_contents.split("\n"):
         arr = line.split()
@@ -192,5 +188,5 @@ def judge(problem, bat, case, compl, cmdrun, judgeNum, timelim, username, sc, se
             return ("Internal System Error [" + taken + " seconds" + memMsg + "]", ft, memTaken)
     except Exception as e:
         if "ERRORS_WEBHOOK" in os.environ:
-                requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
+            requests.post(os.environ['ERRORS_WEBHOOK'], json = {"content":f"{os.environ.get('PING_MESSAGE')}\n**Error occured on judge {judgeNum}:**\n```{traceback.format_exc()}```"})
     os.system("rm Judge" + str(judgeNum) + "/data.out")
