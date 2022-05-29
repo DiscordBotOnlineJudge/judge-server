@@ -1,0 +1,15 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: judge-4
+    steps:
+      - name: Deploy to virtual machine
+        run: |
+          REQUEST="$(curl -X POST -H "Content-Type: application/json" -d '{"deploy_key": "${{ secrets.DEPLOY_TOKEN }}"}' https://judge-4.jimmyliu.dev/deploy?repo_name=judge-server)"
+          echo $REQUEST
+          if [[ "$REQUEST" == *"Error"* ]]; then exit 1; else exit 0; fi
